@@ -31,4 +31,4 @@ import Route from '@ioc:Adonis/Core/Route'
 // Route.delete('/:id', 'TasksController.destroy').as('destroy')
 
 Route.resource('user', 'UsersController').apiOnly()
-Route.resource('task', 'TasksController').apiOnly()
+Route.shallowResource('user.task', 'TasksController').apiOnly()
