@@ -9,10 +9,13 @@ export default class UsersController {
   }
 
   public async store({ request, response }: HttpContextContract) {
-    const { name } = await request.all()
+    const { name, username, email, password } = await request.all()
 
     const data = {
       name: name,
+      username: username,
+      email: email,
+      password: password,
     }
 
     if (!name) {
@@ -38,9 +41,9 @@ export default class UsersController {
   }
 
   public async update({ params, request, response }: HttpContextContract) {
-    const { name } = await request.all()
+    const { name, username, email, password } = await request.all()
 
-    const data = { name: name }
+    const data = { name: name, username: username, email: email, password: password }
 
     let id = params.id
 

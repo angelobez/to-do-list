@@ -20,15 +20,23 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-// Route.get('/', 'TasksController.index').as('index')
+Route.post('login', async ({ auth, request, response }) => {
+  const email = request.input('email')
+  const password = request.input('password')
 
-// Route.get('/:id', 'TasksController.show').as('show')
+  try {
+    const token = await auth.use('api').attempt(email, password)
+    return token
+  } catch {
+    return response.unauthorized('Invalid credentials')
+  }
+})
 
-// Route.post('/', 'TasksController.store').as('store')
-
-// Route.put('/:id', 'TasksController.update').as('update')
-
-// Route.delete('/:id', 'TasksController.destroy').as('destroy')
+Route.get('dashboard', async ({ auth }) => {
+  await auth.use('api').authenticate()
+  console.log(auth.use('api').user!)
+  return `Olá ${auth.user?.name}, você está autenticado`
+})
 
 Route.resource('user', 'UsersController').apiOnly()
 Route.shallowResource('user.task', 'TasksController').apiOnly()
