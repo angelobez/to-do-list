@@ -15,15 +15,6 @@ export default class User extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @manyToMany(() => Task, {
-    localKey: 'id',
-    pivotForeignKey: 'user_id',
-    relatedKey: 'id',
-    pivotRelatedForeignKey: 'task_id',
-    pivotTable: 'task_users',
-  })
-  public tasks: ManyToMany<typeof Task>
-
   @column()
   public name: string
 

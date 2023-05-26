@@ -34,9 +34,9 @@ Route.post('login', async ({ auth, request, response }) => {
 
 Route.get('dashboard', async ({ auth }) => {
   await auth.use('api').authenticate()
-  console.log(auth.use('api').user!)
+  // console.log(auth.use('api').user!)
   return `Olá ${auth.user?.name}, você está autenticado`
 })
 
 Route.resource('user', 'UsersController').apiOnly()
-Route.shallowResource('user.task', 'TasksController').apiOnly()
+Route.resource('task', 'TasksController').apiOnly()

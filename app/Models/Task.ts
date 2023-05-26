@@ -1,9 +1,15 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
+import User from './User'
 
 export default class Task extends BaseModel {
   @column({ isPrimary: true })
   public id: number
+
+  @manyToMany(() => User, {
+    pivotTable: 'task_coowners',
+  })
+  public coowner: ManyToMany<typeof User>
 
   @column()
   public id_user: number

@@ -9,10 +9,11 @@ export default class TasksController {
     return response.ok(allTasks)
   }
 
-  public async store({ request, response }: HttpContextContract) {
-    const { name, id_user, description, due_date, status } = await request.all()
-
-    const user = await User.findBy('id', id_user)
+  public async store({ request, response, auth }: HttpContextContract) {
+    const { name, description, due_date, status, coowner } = request.all()
+    await auth.use('api').authenticate()
+    console.log(auth.use('api').user!)
+    const user = await User.findBy('id', auth.user?.id)
 
     if (!user) {
       return response.badRequest({ mensagem: 'Usuário não encontrado' })
@@ -26,13 +27,14 @@ export default class TasksController {
 
     const data = {
       name: name,
-      id_user: id_user,
+      id_user: auth.user?.id,
       description: description,
       due_date: due_date,
       status: status,
     }
 
-    await Task.create(data)
+    const task = await Task.create(data)
+    await task.related('coowner').attach(coowner)
 
     return response.ok({ mensagem: 'Tarefa criada com sucesso' })
   }

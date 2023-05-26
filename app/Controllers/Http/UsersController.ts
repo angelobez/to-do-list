@@ -18,6 +18,12 @@ export default class UsersController {
       password: password,
     }
 
+    const user = await User.findBy('email', email)
+
+    if (user) {
+      return response.badRequest({ mensagem: 'Email já cadastrado' })
+    }
+
     if (!name) {
       return response.badRequest({ mensagem: 'O campo name é necessário' })
     }
@@ -35,7 +41,9 @@ export default class UsersController {
     if (!user) {
       return response.badRequest({ mensagem: 'Usuário não encontrado' })
     }
-    await user.load('Tasks')
+    await user.load('Tasks', (q) => {
+      q.preload('coowner')
+    })
 
     return response.ok(user)
   }
