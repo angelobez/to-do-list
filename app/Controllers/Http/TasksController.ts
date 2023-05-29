@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Database from '@ioc:Adonis/Lucid/Database'
 import Task from 'App/Models/Task'
 import User from 'App/Models/User'
 
@@ -19,7 +20,7 @@ export default class TasksController {
       return response.badRequest({ mensagem: 'Usuário não encontrado' })
     }
 
-    if (!name || !description || !due_date || status == null) {
+    if (!name || !description || !due_date || status == null || !coowner) {
       return response.badRequest({
         mensagem: 'Os campos name, description, due_date e status são necessários',
       })
