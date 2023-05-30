@@ -1,5 +1,4 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Database from '@ioc:Adonis/Lucid/Database'
 import Task from 'App/Models/Task'
 import User from 'App/Models/User'
 

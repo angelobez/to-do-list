@@ -25,7 +25,11 @@ Projeto de Tarefas:
 
 - Ao concluir a task, deve-se enviar um e-mail para o usuário, informando que sua task foi terminada. (Usa o Mailtrap pra testar)
 
-- Deve haver uma rotina, que rode a cada 1 hora e verifique as tasks que existem no banco, toda task que estiver como PENDENTE a mais de 24 horas deve ficar com o status ARCHIVED. Não modifique a migration que cria, crie uma nova migration que atualize a coluna genero, para ser do tipo enum e possuir os status ('ARCHIVED','PENDING', 'DONE')
+- Deve haver uma rotina, que rode a cada 1 hora e verifique as tasks que existem no banco, 
+toda task que estiver como PENDENTE a mais de 24 horas deve ficar 
+com o status ARCHIVED. Não modifique a migration que cria, crie uma nova 
+migration que atualize a coluna genero, para ser do tipo enum e possuir os 
+status ('ARCHIVED','PENDING', 'DONE')
 ( 
 https://www.npmjs.com/package/adonis-scheduler
 https://github.com/node-schedule/node-schedule#cron-style-scheduling

@@ -19,6 +19,8 @@
 */
 
 import Route from '@ioc:Adonis/Core/Route'
+import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
+import './routes/users.ts'
 
 Route.post('login', async ({ auth, request, response }) => {
   const email = request.input('email')
@@ -34,9 +36,15 @@ Route.post('login', async ({ auth, request, response }) => {
 
 Route.get('dashboard', async ({ auth }) => {
   await auth.use('api').authenticate()
-  // console.log(auth.use('api').user!)
   return `Olá ${auth.user?.name}, você está autenticado`
 })
 
 Route.resource('user', 'UsersController').apiOnly()
 Route.resource('task', 'TasksController').apiOnly()
+
+// check db connection
+Route.get('health', async ({ response }) => {
+  const report = await HealthCheck.getReport()
+
+  return report.healthy ? response.ok(report) : response.badRequest(report)
+})
