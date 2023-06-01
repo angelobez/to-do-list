@@ -14,18 +14,18 @@ Descobre o que é:
 
 Projeto de Tarefas:
 
-- Você associe a tarefa ao usuario: Toda tarefa deve pertencer a 1 usuario.
-- A tarefa pode ter 1 ou mais usuarios, que são coadjuvantes na task
-- Implementar autenticação, de forma que só possa ser criado tasks se o usuário estiver logado.
-- O usuário logado a criar a task, deve ser consequentemente o responsável por ela.
+X- Você associe a tarefa ao usuario: Toda tarefa deve pertencer a 1 usuario.
+X- A tarefa pode ter 1 ou mais usuarios, que são coadjuvantes na task
+X- Implementar autenticação, de forma que só possa ser criado tasks se o usuário estiver logado.
+X- O usuário logado a criar a task, deve ser consequentemente o responsável por ela.
  (Ou seja, não quero que o id do usuario seja enviado pela api, por dentro do código deve-se pegar quem tá logado 
  e associar o id dessa pessoa a task.)
 
-- As tasks devem ser paginadas, de forma que no retorno de todas as tasks do usuario, retorne no máximo 5 e as informações para a proxima pagina
+X- As tasks devem ser paginadas, de forma que no retorno de todas as tasks do usuario, retorne no máximo 5 e as informações para a proxima pagina
 
-- Ao concluir a task, deve-se enviar um e-mail para o usuário, informando que sua task foi terminada. (Usa o Mailtrap pra testar)
+X- Ao concluir a task, deve-se enviar um e-mail para o usuário, informando que sua task foi terminada. (Usa o Mailtrap pra testar)
 
-- Deve haver uma rotina, que rode a cada 1 hora e verifique as tasks que existem no banco, 
+X- Deve haver uma rotina, que rode a cada 1 hora e verifique as tasks que existem no banco, 
 toda task que estiver como PENDENTE a mais de 24 horas deve ficar 
 com o status ARCHIVED. Não modifique a migration que cria, crie uma nova 
 migration que atualize a coluna genero, para ser do tipo enum e possuir os 

@@ -20,26 +20,13 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
-import './routes/users.ts'
+import Database from '@ioc:Adonis/Lucid/Database'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Task from 'App/Models/Task'
+import Mail from '@ioc:Adonis/Addons/Mail'
+import Env from '@ioc:Adonis/Core/Env'
+import User from 'App/Models/User'
 
-Route.post('login', async ({ auth, request, response }) => {
-  const email = request.input('email')
-  const password = request.input('password')
-
-  try {
-    const token = await auth.use('api').attempt(email, password)
-    return token
-  } catch {
-    return response.unauthorized('Invalid credentials')
-  }
-})
-
-Route.get('dashboard', async ({ auth }) => {
-  await auth.use('api').authenticate()
-  return `Olá ${auth.user?.name}, você está autenticado`
-})
-
-Route.resource('user', 'UsersController').apiOnly()
 Route.resource('task', 'TasksController').apiOnly()
 
 // check db connection
@@ -48,3 +35,58 @@ Route.get('health', async ({ response }) => {
 
   return report.healthy ? response.ok(report) : response.badRequest(report)
 })
+
+Route.group(() => {
+  Route.post('register', 'Users/AuthController.register').as('register')
+  Route.post('login', 'Users/AuthController.login').as('login')
+  Route.post('logout', 'Users/AuthController.logout').as('logout')
+  Route.get('dashboard', 'Users/AuthController.dashboard')
+  Route.get('task', async ({ auth, request }) => {
+    await auth.use('api').authenticate()
+
+    const user_id = auth.user!.id
+
+    const page = request.input('page', 1)
+
+    const tasks = await Database.from('tasks').where('id_user', user_id).paginate(page, 5)
+
+    return tasks
+  })
+  Route.put('task/:id', async ({ params, request, response }: HttpContextContract) => {
+    const { status } = await request.all()
+
+    let id = params.id
+
+    console.log(id)
+
+    const task = await Task.findBy('id', id)
+    const user = await User.findBy('id', task?.id_user)
+
+    if (!task) {
+      return response.badRequest({ mensagem: 'Tarefa não encontrado' })
+    }
+
+    const data = {
+      status: status,
+    }
+
+    task.merge(data)
+
+    await task.save()
+
+    if (status === 'DONE') {
+      Mail.send((message) => {
+        message
+          .from(Env.get('DEFAULT_FROM_EMAIL'))
+          .to(user!.email)
+          .subject(`A tarefa ${task.name} foi concluída!`)
+        console.log('email enviado')
+      })
+    }
+
+    return response.ok({ mensagem: 'Tarefa atualizada com sucesso' })
+  })
+}).prefix('user/')
+Route.resource('user', 'UsersController').apiOnly()
+
+Route.get('/verify-email/:email', 'users/EmailVerificationsController.confirm').as('verifyEmail')

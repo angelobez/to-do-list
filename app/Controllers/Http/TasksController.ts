@@ -1,16 +1,20 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Database from '@ioc:Adonis/Lucid/Database'
 import Task from 'App/Models/Task'
 import User from 'App/Models/User'
 
 export default class TasksController {
-  public async index({ response }: HttpContextContract) {
-    const allTasks = await Task.all()
+  public async index({ request, response, auth }: HttpContextContract) {
+    const page = request.input('page', 1)
+    const limit = 10
 
-    return response.ok(allTasks)
+    const tasks = await Database.from('tasks').paginate(page, limit)
+
+    return response.ok(tasks)
   }
 
   public async store({ request, response, auth }: HttpContextContract) {
-    const { name, description, due_date, status, coowner } = request.all()
+    const { name, description, due_date, coowner } = request.all()
     await auth.use('api').authenticate()
     console.log(auth.use('api').user!)
     const user = await User.findBy('id', auth.user?.id)
@@ -19,9 +23,9 @@ export default class TasksController {
       return response.badRequest({ mensagem: 'Usuário não encontrado' })
     }
 
-    if (!name || !description || !due_date || status == null || !coowner) {
+    if (!name || !description || !due_date || !coowner) {
       return response.badRequest({
-        mensagem: 'Os campos name, description, due_date e status são necessários',
+        mensagem: 'Os campos name, description, due_date e o array de coowner são necessários',
       })
     }
 
@@ -30,7 +34,7 @@ export default class TasksController {
       id_user: auth.user?.id,
       description: description,
       due_date: due_date,
-      status: status,
+      status: 'PENDING',
     }
 
     const task = await Task.create(data)

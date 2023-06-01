@@ -24,7 +24,7 @@ export default class Task extends BaseModel {
   public due_date: string
 
   @column()
-  public status: boolean
+  public status: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

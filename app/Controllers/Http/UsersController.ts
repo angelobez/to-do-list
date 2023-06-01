@@ -4,10 +4,8 @@ import User from 'App/Models/User'
 
 export default class UsersController {
   public async index({ request, response }: HttpContextContract) {
-    // const allUsers = await User.all()
-
     const page = request.input('page', 1)
-    const limit = 5
+    const limit = 10
 
     const users = await Database.from('users').paginate(page, limit)
 

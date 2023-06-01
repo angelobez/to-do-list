@@ -42,4 +42,9 @@ export default class AuthController {
     await auth.logout()
     return response.status(200)
   }
+
+  public async dashboard({ auth }: HttpContextContract) {
+    await auth.use('api').authenticate()
+    return `Olá ${auth.user?.name}, você está autenticado`
+  }
 }
